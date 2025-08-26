@@ -1,0 +1,48 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - return_item
+  - track_order
+  - cancel_order
+  - ask_refund
+  - default
+
+entities:
+  - product
+
+slots:
+  product:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: product
+
+responses:
+  utter_greet:
+    - text: "Hey there! How can I help you today?"
+
+  utter_goodbye:
+    - text: "Thanks for visiting. Have a great day!"
+
+  utter_return_item:
+    - text: "Sure, I can help you return your {product}. Please follow the return link sent to your email."
+
+  utter_track_order:
+    - text: "Let me check your order status. Could you please provide your order ID?"
+
+  utter_cancel_order:
+    - text: "I’ll help you cancel your order for {product}. Hang tight."
+
+  utter_ask_refund:
+    - text: "Refunds are processed in 3-5 business days. You'll get updates on your registered email."
+
+  utter_default:
+    - text: "Please reach out to customer care on 000-000-00 for further information and assistance."
+
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

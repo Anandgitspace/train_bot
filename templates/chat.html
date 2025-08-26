@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat with our AI Bot</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+    }
+
+    #chat-float-button {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #f0ed32;
+      color: black;
+      cursor: move;
+      font-size: 30px;
+      text-align: center;
+      line-height: 60px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+    }
+
+    #chat-container {
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      bottom: 100px;
+      right: 25px;
+      background-color: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-height: 600px;
+      height: 500px;
+      z-index: 998;
+    }
+
+    #header {
+      background-color: #f0ed32;
+      padding: 15px;
+      color: black;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #header img {
+      height: 28px;
+      margin-left: 8px;
+    }
+
+    #chatbox {
+      padding: 15px;
+      background-color: #ffffff;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+ 
+    .msg {
+      margin: 10px 0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      max-width: 80%;
+      word-wrap: break-word;
+      line-height: 1.4;
+    }
+
+    .user {
+      background-color: #D8F0F1;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+
+    .bot {
+      background-color: #C5F4F7;
+      align-self: flex-start;
+      margin-right: auto;
+    }
+
+    #input-area {
+      display: flex;
+      border-top: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    #message {
+      flex: 1;
+      resize: none;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      height: 40px;
+    }
+
+    button {
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      padding: 0 16px;
+      margin-left: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #3b7bc4;
+    }
+
+    .quick-replies {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .quick-replies button {
+      background-color: #eee;
+      color: #333;
+      margin: 5px 5px 0 0;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    .quick-replies button:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div id="chat-float-button" onclick="toggleChat()">💬</div>
+
+<div id="chat-container">
+  <div id="header">
+    BeeAI
+    <img src="/static/hive_icon.png" alt="Hive Icon" />
+  </div>
+
+  <div id="chatbox">
+    <div class="msg bot">Hi! How can I assist you today?</div>
+    <div class="quick-replies" id="quick-options">
+      <button onclick="sendQuick('FAQs')">📖 FAQs</button>
+      <button onclick="sendQuick('Order Help')">📦 Orders</button>
+      <button onclick="sendQuick('Other Help')">💬 Something Else</button>
+    </div>
+  </div>
+
+  <div id="input-area">
+    <textarea id="message" placeholder="Type your message..."></textarea>
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  const textarea = document.getElementById("message");
+  const chatbox = document.getElementById("chatbox");
+
+  function toggleChat() {
+    const container = document.getElementById("chat-container");
+    container.style.display = container.style.display === "flex" ? "none" : "flex";
+  }
+
+  textarea.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  function appendMessage(msg, sender) {
+    const msgDiv = document.createElement("div");
+    msgDiv.className = `msg ${sender}`;
+    msgDiv.innerText = msg;
+    chatbox.appendChild(msgDiv);
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
+
+  function sendMessage() {
+    let msg = textarea.value.trim();
+    if (!msg) return;
+
+    appendMessage(msg, "user");
+    textarea.value = "";
+
+    fetch("/send_message", {
+      method: "POST",
+      body: new URLSearchParams({ message: msg }),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      appendMessage(data.reply, "bot");
+    });
+  }
+
+  function sendQuick(text) {
+    appendMessage(text, "user");
+    document.getElementById("quick-options").style.display = "none";
+
+    fetch("/send_message", {
+      method: "POST",
+      body: new URLSearchParams({ message: text }),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      appendMessage(data.reply, "bot");
+    });
+  }
+</script>
+
+<script>
+  // DRAG FUNCTIONALITY FOR FLOATING BUTTON
+  const floatBtn = document.getElementById("chat-float-button");
+  let offsetX, offsetY, isDragging = false;
+
+  floatBtn.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    offsetX = e.clientX - floatBtn.getBoundingClientRect().left;
+    offsetY = e.clientY - floatBtn.getBoundingClientRect().top;
+    floatBtn.style.transition = "none"; // Disable smooth snapping while dragging
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    floatBtn.style.left = `${e.clientX - offsetX}px`;
+    floatBtn.style.top = `${e.clientY - offsetY}px`;
+    floatBtn.style.bottom = "auto"; // Allow moving freely
+    floatBtn.style.right = "auto";
+    floatBtn.style.position = "fixed";
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    floatBtn.style.transition = "all 0.2s ease";
+  });
+</script>
+
+
+</body>
+</html>

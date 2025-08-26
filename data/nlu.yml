@@ -1,0 +1,84 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hello
+    - hi
+    - hey there
+    - good morning
+    - good evening
+    - yo
+    - what's up?
+
+- intent: return_item
+  examples: |
+    - I want to return [my shoes](product)
+    - I need to return [a t-shirt](product)
+    - Can you help me return [this shirt](product)?
+    - How do I send back [this dress](product)?
+    - I want to give back [the item](product)
+    - [These shoes](product) are not good, need to return them
+    - I changed my mind, want to return [the phone](product)
+    - Please guide me to return [the headphones](product)
+    - Return [laptop](product) asap
+    - [The phone](product) I received is faulty, I need to return it
+    - What’s the return policy for [jeans](product)?
+    - Return request for [the order](product)
+    - I bought [shoes](product), but I want to return
+    - I want to initiate a return for [this product](product)
+    - How can I go about returning [this jacket](product)?
+    - Please help me send back [the boots](product)
+    - I want to get a refund for [the smart watch](product)
+    - Can I return something?
+    - I don’t like it, can I return [this item](product)?
+    - Do you take returns for [shirts](product)?
+
+- intent: track_order
+  examples: |
+    - where is my order?
+    - can you track my order?
+    - track order for me
+    - I want to know the status of my order
+    - is my package shipped?
+    - did [my shoes](product) get dispatched?
+    - when will [the jeans](product) arrive?
+    - what's the tracking ID for my parcel?
+    - help me check my delivery status
+    - any update on [the shirt](product) delivery?
+
+- intent: cancel_order
+  examples: |
+    - I want to cancel my order
+    - cancel my booking
+    - please cancel my purchase
+    - how do I cancel [the shoes](product)?
+    - cancel [the jeans](product) now
+    - I made a mistake, cancel the order
+    - I changed my mind, cancel it
+    - stop the shipment for [the t-shirt](product)
+    - I don’t need [the jacket](product) anymore, cancel
+
+- intent: ask_refund
+  examples: |
+    - I want a refund
+    - how do I get my money back?
+    - can I get a refund for [my shoes](product)?
+    - refund for [the shirt](product) please
+    - what is the refund process?
+    - initiate refund for [my item](product)
+    - how long does refund take?
+    - I need the amount refunded
+    - refund the payment
+    - please return my money
+    - return my money
+
+- intent: goodbye
+  examples: |
+    - bye
+    - goodbye
+    - see you
+    - talk to you later
+    - catch you later
+    - I’m done
+    - thanks, bye
